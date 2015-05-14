@@ -3,7 +3,6 @@ package com.example.ddmeng.hellodialogfragment;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -121,28 +120,28 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
     private void showMyCustomDialogFragment() {
         new MyCustomDialogFragment.Builder(MainActivity.this)
                 .setMessage(R.string.hello_world)
-                .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-
-                    }
-                })
-                .setNegativeButton(R.string.alert_dialog_cancel, null)
+                .setPositiveButton(R.string.alert_dialog_ok)
+                .setNegativeButton(R.string.alert_dialog_cancel)
                 .show(getFragmentManager());
     }
 
     @Override
-    public void doPositiveClick() {
-        // Do stuff here.
-        Log.i("FragmentAlertDialog", "Positive click!");
+    public void doPositiveClick(String name) {
 
+        if (MyAlertDialogFragment.class.getName().equals(name)) {
+            Log.i("MyAlert", "positive");
+        } else if (MyCustomDialogFragment.class.getName().equals(name)) {
+            Log.i("MyCustom", "positive");
+        }
     }
 
     @Override
-    public void doNegativeClick() {
-        Log.i("FragmentAlertDialog", "Negative click!");
-
+    public void doNegativeClick(String name) {
+        if (MyAlertDialogFragment.class.getName().equals(name)) {
+            Log.i("MyAlert", "negative");
+        } else if (MyCustomDialogFragment.class.getName().equals(name)) {
+            Log.i("MyCustom", "negative");
+        }
     }
 
     /**

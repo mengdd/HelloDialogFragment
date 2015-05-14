@@ -27,14 +27,14 @@ public class MyAlertDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.alert_dialog_ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                ((DialogFragmentCallback) getActivity()).doPositiveClick();
+                                ((DialogFragmentCallback) getActivity()).doPositiveClick(MyAlertDialogFragment.class.getName());
                             }
                         }
                 )
                 .setNegativeButton(R.string.alert_dialog_cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                ((DialogFragmentCallback) getActivity()).doNegativeClick();
+                                ((DialogFragmentCallback) getActivity()).doNegativeClick(MyAlertDialogFragment.class.getName());
                             }
                         }
                 )

@@ -7,17 +7,26 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class MyCustomDialogFragment extends DialogFragment {
+    private static final String LOG_TAG = MyCustomDialogFragment.class.getSimpleName();
+
+    private static final String TITLE = "title";
+    private static final String MESSAGE = "message";
+    private static final String POSITIVE = "positive";
+    private static final String NEGATIVE = "negative";
+    private static final String CANCELABLE = "cancelable";
+
     private String title;
     private String message;
     private String positive;
     private String negative;
-    private DialogInterface.OnClickListener positiveListener;
-    private DialogInterface.OnClickListener negativeListener;
     private boolean cancelable;
-    private DialogInterface.OnCancelListener cancelListener;
 
     @Override
     public String toString() {
@@ -26,39 +35,89 @@ public class MyCustomDialogFragment extends DialogFragment {
                 ", message='" + message + '\'' +
                 ", positive='" + positive + '\'' +
                 ", negative='" + negative + '\'' +
-                ", positiveListener=" + positiveListener +
-                ", negativeListener=" + negativeListener +
                 ", cancelable=" + cancelable +
-                ", cancelListener=" + cancelListener +
                 '}';
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Log.i("ddmeng", "onCreateDialog ");
-        Log.i("ddmeng", "toString(): " + this.toString());
-        //This codes have bug when you check "Do not keep activities" on.
-        //The bug phenomenon: show dialog, Home exit, enter again, the screen is gray and frozen.
-        //Reason: when you enter again, the data are lost, that is title/message/positive/negative are all null, and cancelable is false
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i(LOG_TAG, "onCreate: " + savedInstanceState);
+        super.onCreate(savedInstanceState);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setTitle("title")
-                .setMessage("message");
-        if (negative != null) {
-            builder.setNegativeButton(negative, negativeListener);
+        //we restore our date here, because onCreate() called before onCreateDialog()
+        //and onCreateView() called after onCreateDialog()
+        if (null != savedInstanceState) {
+            title = savedInstanceState.getString(TITLE);
+            message = savedInstanceState.getString(MESSAGE);
+            positive = savedInstanceState.getString(POSITIVE);
+            negative = savedInstanceState.getString(NEGATIVE);
+            cancelable = savedInstanceState.getBoolean(CANCELABLE);
         }
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i(LOG_TAG, "onCreateView: " + savedInstanceState);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Log.i(LOG_TAG, "onCreateDialog ");
+        Log.i(LOG_TAG, "Fields toString(): " + this.toString());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+                .setTitle(title)
+                .setMessage(message);
+
         if (positive != null) {
-            builder.setPositiveButton(positive, positiveListener);
+            builder.setPositiveButton(positive, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ((DialogFragmentCallback) getActivity()).doPositiveClick(MyCustomDialogFragment.class.getName());
+                }
+            });
+        }
+        if (negative != null) {
+            builder.setNegativeButton(negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ((DialogFragmentCallback) getActivity()).doNegativeClick(MyCustomDialogFragment.class.getName());
+                }
+            });
         }
         setCancelable(cancelable);
         return builder.create();
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.i(LOG_TAG, "onSavedInstanceState");
+        super.onSaveInstanceState(outState);
+        // save our custom data here
+        outState.putString(TITLE, title);
+        outState.putString(MESSAGE, message);
+        outState.putString(POSITIVE, positive);
+        outState.putString(NEGATIVE, negative);
+        outState.putBoolean(CANCELABLE, cancelable);
+
+        // but I did not find a way to put listeners to outState Bundle
+        // so I changed the way to do the work in callbacks in activity
+
+
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        Log.i(LOG_TAG, "onDismiss");
+        super.onDismiss(dialog);
+    }
+
+    @Override
     public void onCancel(DialogInterface dialog) {
+        Log.i(LOG_TAG, "onCancel");
         super.onCancel(dialog);
-        if (cancelListener != null)
-            cancelListener.onCancel(getDialog());
     }
 
     public static class Builder {
@@ -66,11 +125,8 @@ public class MyCustomDialogFragment extends DialogFragment {
         private String title = null;
         private String message = null;
         private String positive = null;
-        private DialogInterface.OnClickListener positiveListener = null;
         private String negative = null;
-        private DialogInterface.OnClickListener negativeListener = null;
         private boolean cancelable = true;
-        private DialogInterface.OnCancelListener cancelListener = null;
 
         public Builder(Context context) {
             this.context = context;
@@ -94,33 +150,26 @@ public class MyCustomDialogFragment extends DialogFragment {
             return this;
         }
 
-        public Builder setPositiveButton(int resId, DialogInterface.OnClickListener listener) {
-            return setPositiveButton(context.getString(resId), listener);
+        public Builder setPositiveButton(int resId) {
+            return setPositiveButton(context.getString(resId));
         }
 
-        public Builder setPositiveButton(String text, DialogInterface.OnClickListener listener) {
+        public Builder setPositiveButton(String text) {
             this.positive = text;
-            this.positiveListener = listener;
             return this;
         }
 
-        public Builder setNegativeButton(int resId, DialogInterface.OnClickListener listener) {
-            return setNegativeButton(context.getString(resId), listener);
+        public Builder setNegativeButton(int resId) {
+            return setNegativeButton(context.getString(resId));
         }
 
-        public Builder setNegativeButton(String text, DialogInterface.OnClickListener listener) {
+        public Builder setNegativeButton(String text) {
             this.negative = text;
-            this.negativeListener = listener;
             return this;
         }
 
         public Builder setCancelable(boolean cancelable) {
             this.cancelable = cancelable;
-            return this;
-        }
-
-        public Builder setOnCancelListener(DialogInterface.OnCancelListener listener) {
-            this.cancelListener = listener;
             return this;
         }
 
@@ -130,10 +179,7 @@ public class MyCustomDialogFragment extends DialogFragment {
             fragment.message = message;
             fragment.positive = positive;
             fragment.negative = negative;
-            fragment.positiveListener = positiveListener;
-            fragment.negativeListener = negativeListener;
             fragment.cancelable = cancelable;
-            fragment.cancelListener = cancelListener;
             fragment.show(fragmentManager, MyCustomDialogFragment.class.getSimpleName());
         }
     }
