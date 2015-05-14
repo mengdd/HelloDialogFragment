@@ -3,6 +3,7 @@ package com.example.ddmeng.hellodialogfragment;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -50,6 +51,14 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
             }
         });
 
+        Button button4 = (Button) findViewById(R.id.button4);
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog(MyCustomDialogFragment.class.getName());
+            }
+        });
+
     }
 
     @Override
@@ -76,10 +85,12 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
 
     @Override
     public void showDialog(String name) {
-        if (name == MyAlertDialogFragment.class.getName()) {
+        if (MyAlertDialogFragment.class.getName().equals(name)) {
             showMyAlertDialog();
-        } else if (name == MyBasicDialogFragment.class.getName()) {
+        } else if (MyBasicDialogFragment.class.getName().equals(name)) {
             showMyBasicDialog();
+        } else if (MyCustomDialogFragment.class.getName().equals(name)) {
+            showMyCustomDialogFragment();
         }
     }
 
@@ -105,6 +116,20 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
         // Create and show the dialog.
         DialogFragment newFragment = MyBasicDialogFragment.newInstance(mStackLevel);
         newFragment.show(ft, "basic dialog");
+    }
+
+    private void showMyCustomDialogFragment() {
+        new MyCustomDialogFragment.Builder(MainActivity.this)
+                .setMessage(R.string.hello_world)
+                .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                    }
+                })
+                .setNegativeButton(R.string.alert_dialog_cancel, null)
+                .show(getFragmentManager());
     }
 
     @Override
