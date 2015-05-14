@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 public class MyCustomDialogFragment extends DialogFragment {
     private String title;
@@ -19,10 +20,30 @@ public class MyCustomDialogFragment extends DialogFragment {
     private DialogInterface.OnCancelListener cancelListener;
 
     @Override
+    public String toString() {
+        return "MyCustomDialogFragment{" +
+                "title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", positive='" + positive + '\'' +
+                ", negative='" + negative + '\'' +
+                ", positiveListener=" + positiveListener +
+                ", negativeListener=" + negativeListener +
+                ", cancelable=" + cancelable +
+                ", cancelListener=" + cancelListener +
+                '}';
+    }
+
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Log.i("ddmeng", "onCreateDialog ");
+        Log.i("ddmeng", "toString(): " + this.toString());
+        //This codes have bug when you check "Do not keep activities" on.
+        //The bug phenomenon: show dialog, Home exit, enter again, the screen is gray and frozen.
+        //Reason: when you enter again, the data are lost, that is title/message/positive/negative are all null, and cancelable is false
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setTitle(title)
-                .setMessage(message);
+                .setTitle("title")
+                .setMessage("message");
         if (negative != null) {
             builder.setNegativeButton(negative, negativeListener);
         }
