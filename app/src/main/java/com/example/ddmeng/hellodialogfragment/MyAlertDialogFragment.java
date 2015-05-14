@@ -6,6 +6,9 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+/**
+ * This MyAlertDialogFragment is from "Alert Dialog" part of http://developer.android.com/reference/android/app/DialogFragment.html
+ */
 public class MyAlertDialogFragment extends DialogFragment {
     public static MyAlertDialogFragment newInstance(int title) {
         MyAlertDialogFragment frag = new MyAlertDialogFragment();

@@ -145,6 +145,10 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
 
     }
 
+    /**
+     * This MyDialogFragment is from "Selecting Between Dialog or Embedding"
+     * of the Android Reference: http://developer.android.com/reference/android/app/DialogFragment.html
+     */
     public static class MyDialogFragment extends DialogFragment {
         static MyDialogFragment newInstance() {
             return new MyDialogFragment();

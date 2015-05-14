@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * This MyBasicDialogFragment is from "Basic Dialog" part of http://developer.android.com/reference/android/app/DialogFragment.html
+ */
 public class MyBasicDialogFragment extends DialogFragment {
     int mNum;
 
