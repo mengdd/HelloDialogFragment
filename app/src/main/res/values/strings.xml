@@ -5,4 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="click_me">Click Me</string>
     <string name="click_me_in_basic_dialog">Click Me, I am in Basic Dialog</string>
+    <string name="alert_dialog_ok">OK</string>
+    <string name="alert_dialog_cancel">Cancel</string>
+    <string name="alert_dialog_two_buttons_title">Alert Dialog Title</string>
 </resources>

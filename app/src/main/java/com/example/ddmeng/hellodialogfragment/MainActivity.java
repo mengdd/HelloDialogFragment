@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,9 +37,19 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog();
+                showDialog(MyBasicDialogFragment.class.getName());
             }
         });
+
+
+        Button button3 = (Button) findViewById(R.id.button3);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog(MyAlertDialogFragment.class.getName());
+            }
+        });
+
     }
 
     @Override
@@ -64,7 +75,21 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
     }
 
     @Override
-    public void showDialog() {
+    public void showDialog(String name) {
+        if (name == MyAlertDialogFragment.class.getName()) {
+            showMyAlertDialog();
+        } else if (name == MyBasicDialogFragment.class.getName()) {
+            showMyBasicDialog();
+        }
+    }
+
+    private void showMyAlertDialog() {
+        DialogFragment newFragment = MyAlertDialogFragment.newInstance(
+                R.string.alert_dialog_two_buttons_title);
+        newFragment.show(getFragmentManager(), "alert dialog");
+    }
+
+    private void showMyBasicDialog() {
         mStackLevel++;
 
         // DialogFragment.show() will take care of adding the fragment
@@ -82,6 +107,18 @@ public class MainActivity extends AppCompatActivity implements DialogFragmentCal
         newFragment.show(ft, "basic dialog");
     }
 
+    @Override
+    public void doPositiveClick() {
+        // Do stuff here.
+        Log.i("FragmentAlertDialog", "Positive click!");
+
+    }
+
+    @Override
+    public void doNegativeClick() {
+        Log.i("FragmentAlertDialog", "Negative click!");
+
+    }
 
     public static class MyDialogFragment extends DialogFragment {
         static MyDialogFragment newInstance() {

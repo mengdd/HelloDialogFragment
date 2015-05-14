@@ -1,5 +1,9 @@
 package com.example.ddmeng.hellodialogfragment;
 
 public interface DialogFragmentCallback {
-    void showDialog();
+    void showDialog(String dialogName);
+
+    void doPositiveClick();
+
+    void doNegativeClick();
 }

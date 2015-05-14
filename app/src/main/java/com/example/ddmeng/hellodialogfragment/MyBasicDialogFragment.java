@@ -136,7 +136,7 @@ public class MyBasicDialogFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // When button is clicked, call up to owning activity.
-                ((DialogFragmentCallback) getActivity()).showDialog();
+                ((DialogFragmentCallback) getActivity()).showDialog(MyBasicDialogFragment.class.getName());
             }
         });
 
