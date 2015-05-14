@@ -1,6 +1,8 @@
 package com.example.ddmeng.hellodialogfragment;
 
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -12,14 +14,26 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogFragmentCallback {
+
+    private int mStackLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button button1 = (Button) findViewById(R.id.button1);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create the fragment and show it as a dialog.
+                DialogFragment newFragment = MyDialogFragment.newInstance();
+                newFragment.show(getFragmentManager(), "dialog");
+            }
+        });
+
+        Button button2 = (Button) findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDialog();
@@ -49,10 +63,23 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void showDialog() {
-        // Create the fragment and show it as a dialog.
-        DialogFragment newFragment = MyDialogFragment.newInstance();
-        newFragment.show(getFragmentManager(), "dialog");
+    @Override
+    public void showDialog() {
+        mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("basic dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = MyBasicDialogFragment.newInstance(mStackLevel);
+        newFragment.show(ft, "basic dialog");
     }
 
 
